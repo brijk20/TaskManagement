@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.18;
 
-import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/AccessControl.sol";
+import "hardhat/console.sol"; 
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
 contract TaskManagement is AccessControl {
     bytes32 public constant TEAM_LEADER_ROLE = keccak256("TEAM_LEADER_ROLE");
