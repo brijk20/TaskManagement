@@ -21,7 +21,7 @@ const App: React.FC = () => {
     await window.ethereum.request({ method: 'eth_requestAccounts' });
   }
 
-async function addTask(title: any, important: any) { 
+async function addTask(title: any, important: any, date: any) { 
 
 
   if (typeof window.ethereum !== 'undefined') { 
@@ -42,11 +42,10 @@ async function addTask(title: any, important: any) {
 
       ); 
 
-      const transaction = await contract.addTask(title, "1679854463", "0x0000000000000000000000000000000000000000000000000000000000000000", important); 
+      
+      const transaction = await contract.addTask(title, (new Date(date).getTime() / 1000), "0x0000000000000000000000000000000000000000000000000000000000000000", important); 
 
       await transaction.wait(); 
-
- 
 
   } 
 
@@ -62,7 +61,7 @@ async function addTask(title: any, important: any) {
 
   const createNewTaskHandler = async (task: Task) => {
 
-    await addTask(task.title, task.important);
+    await addTask(task.title, task.important, task.date);
     dispatch(tasksActions.addNewTask(task));
   };
 
