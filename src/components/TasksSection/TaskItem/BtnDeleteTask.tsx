@@ -4,11 +4,54 @@ import { tasksActions } from "../../../store/Tasks.store";
 import ModalConfirm from "../../Utilities/ModalConfirm";
 import { ReactComponent as Trash } from "../../../assets/trash.svg";
 
+// web3
+import { ethers } from 'ethers';
+import { contractAddress, contractABI } from './../../../constant';
+
+ 
+
+async function requestAccount() {
+  await window.ethereum.request({ method: 'eth_requestAccounts' });
+}
+
+async function deleteTask(id: any) { 
+
+
+  if (typeof window.ethereum !== 'undefined') { 
+
+      await requestAccount(); 
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum); 
+
+      const signer = provider.getSigner(); 
+
+      const contract = new ethers.Contract( 
+
+          contractAddress, 
+
+          contractABI, 
+
+          signer 
+
+      ); 
+
+      const transaction = await contract.deleteTask(id); 
+
+      await transaction.wait(); 
+
+ 
+
+  } 
+
+} 
+
 const BtnDeleteTask: React.FC<{ taskId: string }> = ({ taskId }) => {
   const [showModal, setIsModalShown] = useState<boolean>(false);
   const dispatch = useAppDispatch();
 
-  const removeTaskHandler = () => {
+  const removeTaskHandler = async () => {
+
+    await deleteTask(0);
     dispatch(tasksActions.removeTask(taskId));
   };
   return (

@@ -142,6 +142,14 @@ contract TaskManagement is AccessControl {
         emit TaskUpdated(msg.sender, taskIndex);
     }
 
+    function toggleImportant(uint256 taskIndex) public {
+        require(taskIndex < tasks[msg.sender].length, "Task does not exist");
+        Task storage task = tasks[msg.sender][taskIndex];
+        bool val = task.important;
+        task.important = !val;
+        emit TaskUpdated(msg.sender, taskIndex);
+    }
+
     function completeTask(uint256 taskIndex) public {
         require(taskIndex < tasks[msg.sender].length, "Task does not exist");
         if (hasRole(TEAM_LEADER_ROLE, msg.sender)) {

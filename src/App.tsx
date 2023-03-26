@@ -1,6 +1,4 @@
 import React from "react";
-// import { useState } from "react";
-
 import AccountData from "./components/AccountSection/AccountData";
 import Footer from "./components/Footer";
 import Menu from "./components/Menu/Menu";
@@ -12,8 +10,48 @@ import { modalActions } from "./store/Modal.store";
 import { tasksActions } from "./store/Tasks.store";
 // import { addFile, getFile } from "./ipfs";
 
+// web3
+import { ethers } from 'ethers';
+import { contractAddress, contractABI } from './constant';
 
+ 
 const App: React.FC = () => {
+
+  async function requestAccount() {
+    await window.ethereum.request({ method: 'eth_requestAccounts' });
+  }
+
+async function addTask(title: any, important: any) { 
+
+
+  if (typeof window.ethereum !== 'undefined') { 
+
+      await requestAccount(); 
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum); 
+
+      const signer = provider.getSigner(); 
+
+      const contract = new ethers.Contract( 
+
+          contractAddress, 
+
+          contractABI, 
+
+          signer 
+
+      ); 
+
+      const transaction = await contract.addTask(title, "1679854463", "0x0000000000000000000000000000000000000000000000000000000000000000", important); 
+
+      await transaction.wait(); 
+
+ 
+
+  } 
+
+} 
+
   const modal = useAppSelector((state) => state.modal);
 
   const dispatch = useAppDispatch();
@@ -22,25 +60,11 @@ const App: React.FC = () => {
     dispatch(modalActions.closeModalCreateTask());
   };
 
-  const createNewTaskHandler = (task: Task) => {
+  const createNewTaskHandler = async (task: Task) => {
+
+    await addTask(task.title, task.important);
     dispatch(tasksActions.addNewTask(task));
   };
-
-  //
-  // const [cid, setCid] = useState("");
-  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const file = event.target.files[0];
-  //   addFile(file).then((cid) => {
-  //     setCid(cid);ia
-  //   });
-  // };
-
-  // const handleGetFile = async () => {
-  //   const content = await getFile(cid);
-  //   console.log(content);
-  // };
-
-
 
   return (
     <div className="bg-slate-200 min-h-screen text-slate-600 dark:bg-slate-900 dark:text-slate-400 xl:text-base sm:text-sm text-xs">

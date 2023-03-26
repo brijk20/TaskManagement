@@ -3,6 +3,44 @@ import { useAppDispatch } from "../../../store/hooks";
 import { tasksActions } from "../../../store/Tasks.store";
 import { ReactComponent as StarLine } from "../../../assets/star-line.svg";
 
+// web3
+import { ethers } from 'ethers';
+import { contractAddress, contractABI } from './../../../constant';
+
+async function requestAccount() {
+  await window.ethereum.request({ method: 'eth_requestAccounts' });
+} 
+
+async function toggleImportant(id: any) { 
+
+
+  if (typeof window.ethereum !== 'undefined') { 
+
+      await requestAccount(); 
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum); 
+
+      const signer = provider.getSigner(); 
+
+      const contract = new ethers.Contract( 
+
+          contractAddress, 
+
+          contractABI, 
+
+          signer 
+
+      ); 
+      
+      const transaction = await contract.toggleImportant(id); 
+      
+      await transaction.wait();  
+      
+
+  } 
+
+} 
+
 const BtnMarkAsImportant: React.FC<{
   taskId: string;
   taskImportant: boolean;
@@ -16,7 +54,11 @@ const BtnMarkAsImportant: React.FC<{
   return (
     <button
       title={taskImportant ? "unmark as important" : "mark as important"}
-      onClick={markAsImportantHandler}
+      onClick={async ()=>{
+        await toggleImportant(0)
+        markAsImportantHandler()
+      }
+      }
       className="transition hover:text-slate-700 dark:hover:text-slate-200 ml-auto"
     >
       <StarLine
